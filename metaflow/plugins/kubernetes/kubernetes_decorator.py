@@ -80,6 +80,8 @@ class KubernetesDecorator(StepDecorator):
     tolerations : List[str], default []
         The default is extracted from METAFLOW_KUBERNETES_TOLERATIONS.
         Kubernetes tolerations to use when launching pod in Kubernetes.
+    labels : Dict[str, str], default {}
+        Kubernetes labels to use when launching pod in Kubernetes.
     use_tmpfs : bool, default False
         This enables an explicit tmpfs mount for this step.
     tmpfs_tempdir : bool, default True
@@ -114,6 +116,7 @@ class KubernetesDecorator(StepDecorator):
         "gpu_vendor": None,
         "tolerations": None,  # e.g., [{"key": "arch", "operator": "Equal", "value": "amd"},
         #                              {"key": "foo", "operator": "Equal", "value": "bar"}]
+        "labels": None, # e.g., {"key1": "value1", "key2": "value2"}
         "use_tmpfs": None,
         "tmpfs_tempdir": True,
         "tmpfs_size": None,
@@ -177,6 +180,10 @@ class KubernetesDecorator(StepDecorator):
                         )
             except (NameError, ImportError):
                 pass
+        
+        if self.attributes["labels"]:
+            # TODO gurc: Validate labels
+            print(f"Got labels: {self.attributes["labels"]}")
 
         # parse the CPU, memory, disk, values from the KUBERNETES_ environment variable (you would need to export the METAFLOW_KUBERNETES_CPU, METAFLOW_KUBERNETES_MEMORY and/or METAFLOW_KUBERNTES_DISK environment variable with the desired values before running the flow)
         # find the values from the environment variables, then validate if the values are still the default ones, if so, then replace them with the values from the environment variables (otherwise, keep the values from the decorator)

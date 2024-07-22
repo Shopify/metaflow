@@ -183,7 +183,7 @@ class KubernetesDecorator(StepDecorator):
         
         if self.attributes["labels"]:
             # TODO gurc: Validate labels
-            print(f"Got labels: {self.attributes["labels"]}")
+            print(f"Got labels: {self.attributes['labels']}")
 
         # parse the CPU, memory, disk, values from the KUBERNETES_ environment variable (you would need to export the METAFLOW_KUBERNETES_CPU, METAFLOW_KUBERNETES_MEMORY and/or METAFLOW_KUBERNTES_DISK environment variable with the desired values before running the flow)
         # find the values from the environment variables, then validate if the values are still the default ones, if so, then replace them with the values from the environment variables (otherwise, keep the values from the decorator)
@@ -387,7 +387,7 @@ class KubernetesDecorator(StepDecorator):
                         "=".join([key, str(val)]) if val else key
                         for key, val in v.items()
                     ]
-                elif k in ["tolerations", "persistent_volume_claims"]:
+                elif k in ["tolerations", "persistent_volume_claims", "labels"]:
                     cli_args.command_options[k] = json.dumps(v)
                 else:
                     cli_args.command_options[k] = v

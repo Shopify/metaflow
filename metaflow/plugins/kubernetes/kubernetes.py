@@ -218,6 +218,7 @@ class Kubernetes(object):
                 # todo: [final-refactor] ask @shri what was the motive when we did initial implementation
                 subdomain=name,
                 tolerations=tolerations,
+                labels=labels,
                 use_tmpfs=use_tmpfs,
                 tmpfs_tempdir=tmpfs_tempdir,
                 tmpfs_size=tmpfs_size,

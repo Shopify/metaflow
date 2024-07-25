@@ -114,6 +114,12 @@ def kubernetes():
     multiple=False,
 )
 @click.option(
+    "--annotations",
+    default=None,
+    type=JSONTypeClass(),
+    multiple=False,
+)
+@click.option(
     "--labels",
     default=None,
     type=JSONTypeClass(),
@@ -155,6 +161,7 @@ def step(
     run_time_limit=None,
     persistent_volume_claims=None,
     tolerations=None,
+    annotations=None,
     labels=None,
     shared_memory=None,
     port=None,
@@ -297,6 +304,7 @@ def step(
                 persistent_volume_claims=persistent_volume_claims,
                 tolerations=tolerations,
                 labels=labels,
+                annotations=annotations,
                 shared_memory=shared_memory,
                 port=port,
                 num_parallel=num_parallel,

@@ -74,6 +74,16 @@ class KubernetesJob(object):
             if self._kwargs["shared_memory"]
             else None
         )
+
+        gpu_resource_definition = {"%s.com/gpu".lower()
+                                    % self._kwargs["gpu_vendor"]: str(
+                                        self._kwargs["gpu"]
+                                    )
+                                    for k in [0]
+                                    # Don't set GPU requests if gpu isn't specified.
+                                    if self._kwargs["gpu"] is not None
+        }
+        
         return client.V1JobSpec(
             # Retries are handled by Metaflow when it is responsible for
             # executing the flow. The responsibility is moved to Kubernetes
@@ -155,15 +165,10 @@ class KubernetesJob(object):
                                     "memory": "%sM" % str(self._kwargs["memory"]),
                                     "ephemeral-storage": "%sM"
                                     % str(self._kwargs["disk"]),
+                                    **gpu_resource_definition
                                 },
                                 limits={
-                                    "%s.com/gpu".lower()
-                                    % self._kwargs["gpu_vendor"]: str(
-                                        self._kwargs["gpu"]
-                                    )
-                                    for k in [0]
-                                    # Don't set GPU limits if gpu isn't specified.
-                                    if self._kwargs["gpu"] is not None
+                                    **gpu_resource_definition
                                 },
                             ),
                             volume_mounts=(

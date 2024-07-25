@@ -190,6 +190,7 @@ class Kubernetes(object):
         env=None,
         persistent_volume_claims=None,
         tolerations=None,
+        annotations=None,
         labels=None,
         shared_memory=None,
         port=None,
@@ -218,6 +219,7 @@ class Kubernetes(object):
                 # todo: [final-refactor] ask @shri what was the motive when we did initial implementation
                 subdomain=name,
                 tolerations=tolerations,
+                annotations=annotations,
                 labels=labels,
                 use_tmpfs=use_tmpfs,
                 tmpfs_tempdir=tmpfs_tempdir,
@@ -363,13 +365,14 @@ class Kubernetes(object):
         for name, value in env.items():
             jobset.environment_variable(name, value)
 
-        annotations = {
+        _annotations = {
             "metaflow/user": user,
             "metaflow/flow_name": flow_name,
             "metaflow/control-task-id": task_id,
+            **annotations,
         }
         if current.get("project_name"):
-            annotations.update(
+            _annotations.update(
                 {
                     "metaflow/project_name": current.project_name,
                     "metaflow/branch_name": current.branch_name,
@@ -377,7 +380,7 @@ class Kubernetes(object):
                 }
             )
 
-        for name, value in annotations.items():
+        for name, value in _annotations.items():
             jobset.annotation(name, value)
 
         (

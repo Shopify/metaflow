@@ -80,6 +80,8 @@ class KubernetesDecorator(StepDecorator):
     tolerations : List[str], default []
         The default is extracted from METAFLOW_KUBERNETES_TOLERATIONS.
         Kubernetes tolerations to use when launching pod in Kubernetes.
+    annotations: Dict[str, str], default {}
+        ....
     labels : Dict[str, str], default {}
         Kubernetes labels to use when launching pod in Kubernetes.
     use_tmpfs : bool, default False
@@ -116,6 +118,7 @@ class KubernetesDecorator(StepDecorator):
         "gpu_vendor": None,
         "tolerations": None,  # e.g., [{"key": "arch", "operator": "Equal", "value": "amd"},
         #                              {"key": "foo", "operator": "Equal", "value": "bar"}]
+        "annotations": None,
         "labels": None, # e.g., {"key1": "value1", "key2": "value2"}
         "use_tmpfs": None,
         "tmpfs_tempdir": True,
@@ -184,6 +187,9 @@ class KubernetesDecorator(StepDecorator):
         if self.attributes["labels"]:
             # TODO gurc: Validate labels
             print(f"Got labels: {self.attributes['labels']}")
+
+        if self.attributes["annotations"]:
+            print(f"Got annotations: {self.attributes['annotations']}")
 
         # parse the CPU, memory, disk, values from the KUBERNETES_ environment variable (you would need to export the METAFLOW_KUBERNETES_CPU, METAFLOW_KUBERNETES_MEMORY and/or METAFLOW_KUBERNTES_DISK environment variable with the desired values before running the flow)
         # find the values from the environment variables, then validate if the values are still the default ones, if so, then replace them with the values from the environment variables (otherwise, keep the values from the decorator)
@@ -387,7 +393,7 @@ class KubernetesDecorator(StepDecorator):
                         "=".join([key, str(val)]) if val else key
                         for key, val in v.items()
                     ]
-                elif k in ["tolerations", "persistent_volume_claims", "labels"]:
+                elif k in ["tolerations", "persistent_volume_claims", "labels", "annotations"]:
                     cli_args.command_options[k] = json.dumps(v)
                 else:
                     cli_args.command_options[k] = v

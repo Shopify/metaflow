@@ -470,6 +470,7 @@ class Kubernetes(object):
         env=None,
         persistent_volume_claims=None,
         tolerations=None,
+        annotations=None,
         labels=None,
         shared_memory=None,
         port=None,
@@ -613,12 +614,13 @@ class Kubernetes(object):
         for name, value in env.items():
             job.environment_variable(name, value)
 
-        annotations = {
+        _annotations = {
             "metaflow/user": user,
             "metaflow/flow_name": flow_name,
+            **annotations,
         }
         if current.get("project_name"):
-            annotations.update(
+            _annotations.update(
                 {
                     "metaflow/project_name": current.project_name,
                     "metaflow/branch_name": current.branch_name,
@@ -626,7 +628,7 @@ class Kubernetes(object):
                 }
             )
 
-        for name, value in annotations.items():
+        for name, value in _annotations.items():
             job.annotation(name, value)
 
         (
